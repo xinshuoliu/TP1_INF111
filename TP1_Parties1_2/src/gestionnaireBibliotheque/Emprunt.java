@@ -68,7 +68,7 @@ public class Emprunt {
             return 0;
         }
         return jourActuel - jourRetourPrevu;
-    }
+    }   
 
     public void retourner(int jourRetour) {
         this.jourRetour = jourRetour;
