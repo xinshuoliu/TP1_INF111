@@ -32,15 +32,35 @@ public class GestionnaireBibliotheque {
         utilisateurs.put(karim.getId(), karim);
     }
 
-
     //Méthodes
     //À compléter
     public String traiterCommande(int idConnexion, String typeCommande, String argument) {
-        
-        if (typeCommande == "REGISTER") {
-            return
+        if (typeCommande == null) {
+            return "COMMAND_ERROR";
+        }
+        switch (typeCommande.toUpperCase()) {
+            case "REGISTER" :
+                return traiterREGISTER(argument);
+            case "ID" :
+                return traiterID(idConnexion, argument);
+            case "BOOKS" :
+                return traiterBOOKS();
+            case "BORROW" :
+                return traiterBORROW(idConnexion, argument);
+            case "RETURN" :
+                return traiterRETURN(idConnexion, argument);
+            case "RESERVE" :
+                return traiterRESERVE(idConnexion, argument);
+            case "INFO" :
+                return traiterINFO(idConnexion, argument);
+            case "PENALTY" :
+                return traiterPENALTY(idConnexion, argument);
+            case "EXIT" :
+                return traiterEXIT(idConnexion);
+            default : return "COMMAND_ERROR";
         }
     }
+
     //Exercice 1 (à vérifier) 
     public String traiterID(int idConnexion, String argument) {
         if (argument == null || argument.trim().isEmpty()) {
@@ -82,8 +102,10 @@ public class GestionnaireBibliotheque {
         }
         return reponse.toString();
     }
+
     //Exercice 3
     public String traiterBORROW(int idConnexion, String argument) {
+
         Utilisateur utilisateur = utilisateursAuthentifies.get(idConnexion);
         if (utilisateur == null) {
             return "AUTHENTICATION_ERROR";
@@ -95,7 +117,7 @@ public class GestionnaireBibliotheque {
         if (parties.length != 2) {
             return "BAD_ARGUMENT_ERROR";
         }
-        
+
         int idLivre;
         int jour;
         try {
@@ -121,5 +143,222 @@ public class GestionnaireBibliotheque {
         livre.setStatut(StatutLivre.EMPRUNTE);
  
         return "BORROW_OK " + emprunt.getId() + " " + livre.getId() + " " + emprunt.getJourRetourPrevu();
+    }
+
+    //Exercice 4
+    public String traiterRETURN(int idConnexion, String argument) {
+
+        Utilisateur utilisateur = utilisateursAuthentifies.get(idConnexion);
+        if (utilisateur == null) {
+            return "AUTHENTICATION_ERROR";
+        }
+        if (argument == null) {
+            return "BAD_ARGUMENT_ERROR";
+        }
+        String[] parties = argument.split(" ");
+        if (parties.length != 2) {
+            return "BAD_ARGUMENT_ERROR";
+        }
+        int idEmprunt;
+        int jourRetour;
+        try {
+            idEmprunt = Integer.parseInt(parties[0]);
+            jourRetour = Integer.parseInt(parties[1]);
+        } catch (NumberFormatException e) {
+            return "BAD_ARGUMENT_ERROR";
+        }
+
+        Emprunt emprunt = utilisateur.rechercherEmpruntEnCours(idEmprunt);
+        if (emprunt == null) {
+            return "BAD_BORROW_ERROR";
+        }
+ 
+        emprunt.retourner(jourRetour);
+        utilisateur.supprimerEmpruntEnCours(idEmprunt);
+        utilisateur.ajouterEmpruntTermine(emprunt);
+ 
+        Livre livre = emprunt.getLivre();
+ 
+        Reservation reservation = reservationsEnAttente.retirerPourLivre(livre.getId());
+        if (reservation == null) {
+            livre.setStatut(StatutLivre.DISPONIBLE);
+            return "RETURN_OK " + emprunt.getId() + " " + livre.getId();
+        } else {
+            reservation.setStatut(StatutReservation.ATTRIBUEE);
+            Utilisateur uPrioritaire = utilisateurs.get(reservation.getIdUtilisateur());
+ 
+            Emprunt nouvelEmprunt = new Emprunt(livre, uPrioritaire.getId(), jourRetour);
+            uPrioritaire.ajouterEmpruntEnCours(nouvelEmprunt);
+            livre.setStatut(StatutLivre.EMPRUNTE);
+ 
+            return "RESERVATION_ASSIGNED " + nouvelEmprunt.getId() + " " + livre.getId();
+        }
+    }
+
+    //Exercice 5
+    public String traiterRESERVE(int idConnexion, String argument) {
+
+        Utilisateur utilisateur = utilisateursAuthentifies.get(idConnexion);
+        if (utilisateur == null) {
+            return "AUTHENTICATION_ERROR";
+        }
+        if (argument == null || argument.isEmpty()) {
+            return "BAD_ARGUMENT_ERROR";
+        }
+        int idLivre;
+        try {
+            idLivre = Integer.parseInt(argument);
+        } catch (NumberFormatException e) {
+            return "BAD_ARGUMENT_ERROR";
+        }
+ 
+        Livre livre = livres.rechercher(idLivre);
+        if (livre == null) {
+            return "BOOK_NOT_FOUND_ERROR";
+        }
+        if (livre.getStatut() == StatutLivre.DISPONIBLE) {
+            return "BOOK_ALREADY_AVAILABLE_ERROR";
+        }
+        if (utilisateur.getReservations().taille() >= Utilisateur.MAX_RESERVATIONS) {
+            return "RESERVATION_LIMIT_ERROR";
+        }
+        if (utilisateur.possedeReservationEnAttentePourLivre(idLivre)) {
+            return "BAD_ARGUMENT_ERROR";
+        }
+
+        Reservation reservation = new Reservation(livre, utilisateur.getId(), utilisateur.getTypeUtilisateur());
+        reservationsEnAttente.ajouter(reservation);
+        utilisateur.ajouterReservation(reservation);
+        livre.setStatut(StatutLivre.RESERVE);
+ 
+        return "RESERVATION_OK " + reservation.getId() + " " + livre.getId();
+    }
+
+    //Exercice 6
+    public String traiterINFO(int idConnexion, String argument) {
+
+        Utilisateur utilisateur = utilisateursAuthentifies.get(idConnexion);
+        if (utilisateur == null) {
+            return "AUTHENTICATION_ERROR";
+        }
+ 
+        // INFO
+        if (argument == null || argument.isEmpty()) {
+            ListeEmprunts emprunts = utilisateur.getEmpruntsEnCours();
+            StringBuilder reponse = new StringBuilder();
+            reponse.append("INFO ").append(emprunts.taille());
+            for (Emprunt e : emprunts) {
+            reponse.append(" {")
+            .append(e.getId()).append(" ")
+            .append(e.getLivre().getId()).append(" ")
+            .append(e.getJourEmprunt()).append(" ")
+            .append(e.getJourRetourPrevu()).append(" ")
+            .append(e.getStatut()).append("}");
+            }
+            return reponse.toString();
+        }
+        // INFO <id emprunt>
+        int idEmprunt;
+        try {
+            idEmprunt = Integer.parseInt(argument);
+        } catch (NumberFormatException e) {
+            return "BAD_ARGUMENT_ERROR";
+        }
+ 
+        Emprunt emprunt = utilisateur.rechercherEmpruntEnCours(idEmprunt);
+        if (emprunt == null) {
+            return "BAD_BORROW_ERROR";
+        }
+        return "INFO 1 {" + emprunt.getId() + " " + emprunt.getLivre().getId() + " " + emprunt.getJourEmprunt() + " " + emprunt.getJourRetourPrevu() + " " + emprunt.getStatut() + "}";
+    }
+
+    //Exercice 7
+    public String traiterPENALTY(int idConnexion, String argument) {
+
+        Utilisateur utilisateur = utilisateursAuthentifies.get(idConnexion);
+        if (utilisateur == null) {
+            return "AUTHENTICATION_ERROR";
+        }
+        if (argument == null) {
+            return "BAD_ARGUMENT_ERROR";
+        }
+        String[] parties = argument.split(" ");
+        if (parties.length != 2) {
+            return "BAD_ARGUMENT_ERROR";
+        }
+        int idEmprunt;
+        int jourActuel;
+        try {
+            idEmprunt = Integer.parseInt(parties[0]);
+            jourActuel = Integer.parseInt(parties[1]);
+        } catch (NumberFormatException e) {
+            return "BAD_ARGUMENT_ERROR";
+        }
+ 
+        Emprunt emprunt = utilisateur.rechercherEmpruntEnCours(idEmprunt);
+        if (emprunt == null) {
+            emprunt = utilisateur.rechercherEmpruntTermine(idEmprunt);
+        }
+        if (emprunt == null) {
+            return "BAD_BORROW_ERROR";
+        }
+        if (emprunt.estEnRetard(jourActuel) == false) {
+            return "PENALTY 0.00 0";  
+        }
+ 
+        int joursRetard = emprunt.calculerJoursRetard(jourActuel);
+        double montant = utilisateur.calculerPenalite(joursRetard);
+
+        return "PENALTY " + String.format(Locale.US, "%.2f", montant) + " " + joursRetard;
+    }
+
+    //Exercice 8
+    public String traiterREGISTER(String argument) {
+        if (argument == null) {
+            return "BAD_ARGUMENT_ERROR";
+        }
+        String[] parties = argument.split(" ");
+        if (parties.length != 3) {
+            return "BAD_ARGUMENT_ERROR";
+        }
+        int idUtilisateur;
+        try {
+            idUtilisateur = Integer.parseInt(parties[0]);
+        } catch (NumberFormatException e) {
+            return "BAD_ARGUMENT_ERROR";
+        }
+        String typeUtilisateur = parties[1].toUpperCase();
+        String nomUtilisateur = parties[2];
+ 
+        if (utilisateurs.containsKey(idUtilisateur)) {
+            return "BAD_ARGUMENT_ERROR";
+        }
+
+        Utilisateur utilisateur;
+        switch (typeUtilisateur) {
+            case "ETUDIANT" :
+                utilisateur = new Etudiant(idUtilisateur, nomUtilisateur);
+            break;
+            case "PERSONNEL" :
+                utilisateur = new Personnel(idUtilisateur, nomUtilisateur);
+            break;
+            case "PROFESSEUR" :
+                utilisateur = new Professeur(idUtilisateur, nomUtilisateur);
+            break;
+            default : 
+            return "BAD_ARGUMENT_ERROR";
+        }
+ 
+        utilisateurs.put(idUtilisateur, utilisateur);
+        return "REGISTERED " + idUtilisateur + " " + nomUtilisateur;
+    }
+    //Exercice 9
+    public String traiterEXIT(int idConnexion) {
+
+        if (utilisateursAuthentifies.containsKey(idConnexion)) {
+            utilisateursAuthentifies.remove(idConnexion);
+            return "END";
+        }
+        return "AUTHENTICATION_ERROR";
     }
 }
