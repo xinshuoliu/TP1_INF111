@@ -2,9 +2,9 @@ package gestionnaireBibliotheque;
 
 public class Livre {
 
-    public static final int DUREE_MAX_EMPRUNT = 40;
+    public static final int DUREE_MAX_EMPRUNT = 40; // utilise par Emprunt pour calculer date limite
 
-    private static int compteur = 0;
+    private static int compteur = 0; 
 
     private int id;
     private String titre;
@@ -22,7 +22,7 @@ public class Livre {
         this.titre = titre;
         this.auteur = auteur;
         this.categorie = categorie;
-        this.statut = StatutLivre.DISPONIBLE;
+        this.statut = StatutLivre.DISPONIBLE; // tout livre commence dispo
     }
 
     public int getId() {
@@ -60,9 +60,9 @@ public class Livre {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Livre)) return false;
+        if (this == obj) return true; // meme reference en memoire
+        if (!(obj instanceof Livre)) return false; // pas un livre, impossible d'etre egal
         Livre autre = (Livre) obj;
-        return this.id == autre.id;
+        return this.id == autre.id; // deux livres sont egaux si meme id
     }
 }

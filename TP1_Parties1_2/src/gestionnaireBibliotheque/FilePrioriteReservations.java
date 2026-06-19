@@ -4,7 +4,7 @@ import java.util.PriorityQueue;
 
 public class FilePrioriteReservations {
 
-    private PriorityQueue<Reservation> file;
+    private PriorityQueue<Reservation> file; // trie automatiquement par priorite 
 
     public FilePrioriteReservations() {
         file = new PriorityQueue<>();
@@ -18,14 +18,14 @@ public class FilePrioriteReservations {
         if (file.isEmpty()) {
             return null;
         }
-        return file.poll();
+        return file.poll(); // retire et retourne le plus prioritaire
     }
 
     public Reservation consulter() {
         if (file.isEmpty()) {
             return null;
         }
-        return file.peek();
+        return file.peek(); // lit le plus prioritaire sans retirer
     }
 
     public boolean estVide() {
@@ -39,9 +39,9 @@ public class FilePrioriteReservations {
     public Reservation retirerPourLivre(int idLivre) {
         Reservation prioritaire = null;
 
-        for (Reservation r : file) {
+        for (Reservation r : file) {   //pour chaque reservation r danms file
             if (r.getLivre().getId() == idLivre) {
-                if (prioritaire == null || r.compareTo(prioritaire) < 0) {
+                if (prioritaire == null || r.compareTo(prioritaire) < 0) { // compareTo < 0 signifie plus prioritaire
                     prioritaire = r;
                 }
             }
@@ -56,8 +56,9 @@ public class FilePrioriteReservations {
 
     public boolean aReservationPourLivre(int idLivre) {
         for (Reservation r : file) {
-            if (r.getLivre().getId() == idLivre
-                    && r.getStatut() == StatutReservation.EN_ATTENTE) {
+            // ignore les reservations annulees
+            if (r.getLivre().getId() == idLivre && r.getStatut() == StatutReservation.EN_ATTENTE) 
+                { 
                 return true;
             }
         }

@@ -2,12 +2,12 @@ package gestionnaireBibliotheque;
 
 public abstract class Utilisateur {
 
-    public static final int MAX_RESERVATIONS = 10;
+    public static final int MAX_RESERVATIONS = 10; // limite commune a tous les types d'utilisateurs
 
     private int id;
     private String nom;
-    private ListeEmprunts empruntsEnCours;
-    private ListeEmprunts empruntsTermines;
+    private ListeEmprunts empruntsEnCours; // livres pas encore rendus
+    private ListeEmprunts empruntsTermines; // historique emprunts rendus
     private FilePrioriteReservations reservations;
 
     public Utilisateur(int id, String nom) {
@@ -62,10 +62,10 @@ public abstract class Utilisateur {
         return empruntsEnCours.taille() > 0;
     }
 
-    public abstract int nombreMaxEmprunts();
+    public abstract int nombreMaxEmprunts(); // chaque sous-classe definit sa limite
 
     public boolean peutEmprunter() {
-        return empruntsEnCours.taille() < nombreMaxEmprunts();
+        return empruntsEnCours.taille() < nombreMaxEmprunts(); // compare le nombre actuel a la limite
     }
 
     public boolean possedeReservationEnAttentePourLivre(int idLivre) {
@@ -74,12 +74,12 @@ public abstract class Utilisateur {
 
     public boolean ajouterReservation(Reservation reservation) {
         if (reservations.taille() >= MAX_RESERVATIONS) {
-            return false;
+            return false; // file pleine, reservation refusee
         }
         return reservations.ajouter(reservation);
     }
 
-    public abstract double calculerPenalite(int joursRetard);
+    public abstract double calculerPenalite(int joursRetard); // taux different selon type d'utilisateur
 
     public abstract TypeUtilisateur getTypeUtilisateur();
 

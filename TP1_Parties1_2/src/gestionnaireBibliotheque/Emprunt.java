@@ -2,7 +2,7 @@ package gestionnaireBibliotheque;
 
 public class Emprunt {
 
-    private static int compteur = 0;
+    private static int compteur = 0; // partage entre tous les emprunts
 
     private int id;
     private Livre livre;
@@ -22,8 +22,8 @@ public class Emprunt {
         this.livre = livre;
         this.idUtilisateur = idUtilisateur;
         this.jourEmprunt = jourEmprunt;
-        this.jourRetourPrevu = jourEmprunt + Livre.DUREE_MAX_EMPRUNT;
-        this.jourRetour = 0;
+        this.jourRetourPrevu = jourEmprunt + Livre.DUREE_MAX_EMPRUNT; // date limite = debut + duree max
+        this.jourRetour = 0; // 0 = pas encore rendu
         this.statut = StatutEmprunt.EN_COURS;
     }
 
@@ -60,22 +60,22 @@ public class Emprunt {
     }
 
     public boolean estEnRetard(int jourActuel) {
-        return jourActuel > jourRetourPrevu;
+        return jourActuel > jourRetourPrevu;   // le meme jour est correct
     }
 
     public int calculerJoursRetard(int jourActuel) {
         if (!estEnRetard(jourActuel)) {
-            return 0;
+            return 0; // pas retard
         }
         return jourActuel - jourRetourPrevu;
-    }   
+    }
 
     public void retourner(int jourRetour) {
         this.jourRetour = jourRetour;
         if (estEnRetard(jourRetour)) {
             this.statut = StatutEmprunt.EN_RETARD;
         } else {
-            this.statut = StatutEmprunt.RETOURNE;
+            this.statut = StatutEmprunt.RETOURNE; // rendu a temps
         }
     }
 

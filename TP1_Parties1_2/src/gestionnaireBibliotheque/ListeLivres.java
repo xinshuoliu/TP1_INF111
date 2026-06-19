@@ -3,9 +3,12 @@ package gestionnaireBibliotheque;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+
+// meme structure que ListeEmpruints
+
 public class ListeLivres implements IListeLivres, Iterable<Livre> {
 
-    private ArrayList<Livre> liste;
+    private ArrayList<Livre> liste; 
 
     public ListeLivres() {
         liste = new ArrayList<>();
@@ -20,10 +23,10 @@ public class ListeLivres implements IListeLivres, Iterable<Livre> {
     public Livre supprimer(int idLivre) {
         for (int i = 0; i < liste.size(); i++) {
             if (liste.get(i).getId() == idLivre) {
-                return liste.remove(i);
+                return liste.remove(i); 
             }
         }
-        return null;
+        return null; 
     }
 
     @Override
@@ -33,12 +36,12 @@ public class ListeLivres implements IListeLivres, Iterable<Livre> {
                 return l;
             }
         }
-        return null;
+        return null; 
     }
 
     @Override
     public boolean contient(int idLivre) {
-        return rechercher(idLivre) != null;
+        return rechercher(idLivre) != null; 
     }
 
     @Override
@@ -53,7 +56,7 @@ public class ListeLivres implements IListeLivres, Iterable<Livre> {
 
     @Override
     public Iterator<Livre> iterator() {
-        return liste.iterator();
+        return liste.iterator(); 
     }
 
     @Override

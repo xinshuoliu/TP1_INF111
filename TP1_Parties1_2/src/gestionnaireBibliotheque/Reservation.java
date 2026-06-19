@@ -3,13 +3,13 @@ package gestionnaireBibliotheque;
 public class Reservation implements Comparable<Reservation> {
 
     private static int compteurID = 0;
-    private static int compteurOrdre = 0;
+    private static int compteurOrdre = 0; // ordre d'arrivee 
 
     private int id;
     private Livre livre;
     private int idUtilisateur;
     private TypeUtilisateur typeUtilisateur;
-    private int ordreReservation;
+    private int ordreReservation; //tiebreak si deux usagers ont meme priorite
     private StatutReservation statut;
 
     public static int prochainID() {
@@ -27,7 +27,7 @@ public class Reservation implements Comparable<Reservation> {
         this.livre = livre;
         this.idUtilisateur = idUtilisateur;
         this.typeUtilisateur = typeUtilisateur;
-        this.ordreReservation = prochainOrdreReservation();
+        this.ordreReservation = prochainOrdreReservation(); // capture l'ordre d'arrivee au moment de la reservation
         this.statut = StatutReservation.EN_ATTENTE;
     }
 
@@ -60,9 +60,9 @@ public class Reservation implements Comparable<Reservation> {
     }
 
     private int getPriorite() {
-        if (typeUtilisateur == TypeUtilisateur.PROFESSEUR) return 0;
+        if (typeUtilisateur == TypeUtilisateur.PROFESSEUR) return 0; // 0 = le plus prioritaire
         if (typeUtilisateur == TypeUtilisateur.PERSONNEL) return 1;
-        return 2;
+        return 2; // ETUDIANT, le moins prioritaire
     }
 
     @Override
@@ -70,9 +70,10 @@ public class Reservation implements Comparable<Reservation> {
         int maPriorite = this.getPriorite();
         int autrePriorite = autre.getPriorite();
 
-        if (maPriorite < autrePriorite) return -1;
-        if (maPriorite > autrePriorite) return 1;
+        if (maPriorite < autrePriorite) return -1; //passe avant autre
+        if (maPriorite > autrePriorite) return 1;  // passe apres autre
 
+        // si meme type d'utilisateur, celui arrive en premier gagne
         if (this.ordreReservation < autre.ordreReservation) return -1;
         if (this.ordreReservation > autre.ordreReservation) return 1;
 

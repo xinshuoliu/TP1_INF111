@@ -19,22 +19,22 @@ public class Demo {
 
         Etudiant etudiant = new Etudiant(101, "Lucas");
 
-        Emprunt emprunt = new Emprunt(livre1, etudiant.getId(), 5);
+        Emprunt emprunt = new Emprunt(livre1, etudiant.getId(), 5); // emprunte au jour 5, retour prevu jour 45
         System.out.println(emprunt);
-        System.out.println("Jours de retard : " + emprunt.calculerJoursRetard(50));
+        System.out.println("Jours de retard : " + emprunt.calculerJoursRetard(50)); // simule jour 50
 
         // jour retour prevu doit etre 45
         System.out.println("Jour retour prevu : " + emprunt.getJourRetourPrevu());
 
-        System.out.println("En retard au jour 44 : " + emprunt.estEnRetard(44));
-        System.out.println("En retard au jour 46 : " + emprunt.estEnRetard(46));
+        System.out.println("En retard au jour 44 : " + emprunt.estEnRetard(44)); // avant echeance, pas retard
+        System.out.println("En retard au jour 46 : " + emprunt.estEnRetard(46)); // apres echeance, en retard
 
         Emprunt empruntAtemps = new Emprunt(livre2, etudiant.getId(), 5);
-        empruntAtemps.retourner(44);
+        empruntAtemps.retourner(44); // rendu avant le jour 45
         System.out.println("Statut retour a temps : " + empruntAtemps.getStatut());
 
         Emprunt empruntRetard = new Emprunt(livre3, etudiant.getId(), 5);
-        empruntRetard.retourner(50);
+        empruntRetard.retourner(50); // rendu apres le jour 45, donc retard
         System.out.println("Statut retour en retard : " + empruntRetard.getStatut());
 
 
@@ -43,17 +43,17 @@ public class Demo {
         Personnel personnel = new Personnel(102, "Marie");
         Professeur professeur = new Professeur(103, "Jean");
 
-        System.out.println("Penalite etudiant 10j : " + etudiant.calculerPenalite(10));
-        System.out.println("Penalite personnel 10j : " + personnel.calculerPenalite(10));
-        System.out.println("Penalite professeur 10j : " + professeur.calculerPenalite(10));
+        System.out.println("Penalite etudiant 10j : " + etudiant.calculerPenalite(10));   // 0.25, taux bas
+        System.out.println("Penalite personnel 10j : " + personnel.calculerPenalite(10)); // 0.50, taux moyen
+        System.out.println("Penalite professeur 10j : " + professeur.calculerPenalite(10)); // 0.75, taux eleve
 
 
         // Section 4 - Reservations et priorite
 
         Livre livreReserve = new Livre("Biologie", "Moreau", "Sciences");
-        livreReserve.setStatut(StatutLivre.EMPRUNTE);
+        livreReserve.setStatut(StatutLivre.EMPRUNTE); // reserve seulement ce qui est deja pris
 
-        // etudiant arrive en premier mais le professeur est prioritaire
+        // etudiant arrive en premier mais prof est prioritaire
         Reservation resEtudiant = new Reservation(livreReserve, etudiant.getId(), TypeUtilisateur.ETUDIANT);
         Reservation resProfesseur = new Reservation(livreReserve, professeur.getId(), TypeUtilisateur.PROFESSEUR);
         Reservation resPersonnel = new Reservation(livreReserve, personnel.getId(), TypeUtilisateur.PERSONNEL);
@@ -63,8 +63,8 @@ public class Demo {
         file.ajouter(resProfesseur);
         file.ajouter(resPersonnel);
 
-        // ordre attendu : PROFESSEUR, PERSONNEL, ETUDIANT
-        System.out.println("Premier : " + file.consulter());
+        // ordre devrait etre PROFESSEUR, PERSONNEL, ETUDIANT
+        System.out.println("Premier : " + file.consulter()); // regarde sans retirer
         System.out.println("Retire 1 : " + file.retirer());
         System.out.println("Retire 2 : " + file.retirer());
         System.out.println("Retire 3 : " + file.retirer());
@@ -78,7 +78,7 @@ public class Demo {
         listeLivres.ajouter(livre3);
 
         System.out.println("Taille : " + listeLivres.taille());
-        System.out.println("Contient id " + livre1.getId() + " : " + listeLivres.contient(livre1.getId()));
+        System.out.println("Contient id " + livre1.getId() + " : " + listeLivres.contient(livre1.getId())); // cherche par id, pas par titre
         listeLivres.supprimer(livre3.getId());
         System.out.println("Taille apres suppression : " + listeLivres.taille());
         System.out.println(listeLivres);
