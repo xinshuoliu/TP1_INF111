@@ -65,4 +65,11 @@ public class Livre {
         Livre autre = (Livre) obj;
         return this.id == autre.id; // deux livres sont egaux si meme id
     }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
+    }
+
+
 }

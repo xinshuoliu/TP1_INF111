@@ -61,7 +61,7 @@ public class GestionnaireBibliotheque {
         }
     }
 
-    //Exercice 1 (à vérifier) 
+    //Exercice 1  
     public String traiterID(int idConnexion, String argument) {
         if (argument == null || argument.trim().isEmpty()) {
             return "BAD_ARGUMENT_ERROR";

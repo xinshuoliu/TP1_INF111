@@ -5,7 +5,7 @@ public class Demo {
     public static void main(String[] args) {
 
         // Section 1 - Livre
-
+        System.out.println("=== Section 1 - Livres ===");
         Livre livre1 = new Livre("Mathematiques", "Bernard", "Sciences");
         Livre livre2 = new Livre("Physique", "Leroy", "Sciences");
         Livre livre3 = new Livre("Histoire", "Simon", "Sociales");
@@ -14,8 +14,11 @@ public class Demo {
         System.out.println(livre2);
         System.out.println(livre3);
 
+        System.out.println();
+
 
         // Section 2 - Emprunt
+        System.out.println("=== Section 2 - Emprunt ===");
 
         Etudiant etudiant = new Etudiant(101, "Lucas");
 
@@ -37,8 +40,11 @@ public class Demo {
         empruntRetard.retourner(50); // rendu apres le jour 45, donc retard
         System.out.println("Statut retour en retard : " + empruntRetard.getStatut());
 
+        System.out.println();
+
 
         // Section 3 - Penalites
+        System.out.println("=== Section 3 - Penalites ===");
 
         Personnel personnel = new Personnel(102, "Marie");
         Professeur professeur = new Professeur(103, "Jean");
@@ -47,8 +53,11 @@ public class Demo {
         System.out.println("Penalite personnel 10j : " + personnel.calculerPenalite(10)); // 0.50, taux moyen
         System.out.println("Penalite professeur 10j : " + professeur.calculerPenalite(10)); // 0.75, taux eleve
 
+        System.out.println();
 
-        // Section 4 - Reservations et priorite
+
+        // Section 4 - Reservations et priorites
+        System.out.println("=== Section 4 - Reservations et priorites ===");
 
         Livre livreReserve = new Livre("Biologie", "Moreau", "Sciences");
         livreReserve.setStatut(StatutLivre.EMPRUNTE); // reserve seulement ce qui est deja pris
@@ -69,8 +78,11 @@ public class Demo {
         System.out.println("Retire 2 : " + file.retirer());
         System.out.println("Retire 3 : " + file.retirer());
 
+        System.out.println();
+
 
         // Section 5 - Listes
+        System.out.println("=== Section 5 - Listes ===");
 
         ListeLivres listeLivres = new ListeLivres();
         listeLivres.ajouter(livre1);
@@ -89,5 +101,22 @@ public class Demo {
 
         System.out.println("Taille : " + listeEmprunts.taille());
         System.out.println(listeEmprunts);
+
+        System.out.println();
+
+
+        // Section 6 - GestionnaireBibliothèque (Partie II)
+        System.out.println("=== Section 6 - Gestionnaire Bibliotheque (Tests) ===");
+
+        GestionnaireBibliotheque gestionnaire = new GestionnaireBibliotheque();
+
+        System.out.println(gestionnaire.traiterCommande(1, "BOOKS", null));
+        System.out.println(gestionnaire.traiterCommande(1, "ID", "101" ));
+        System.out.println(gestionnaire.traiterCommande(1, "BORROW", "5 5"));
+        System.out.println(gestionnaire.traiterCommande(1, "INFO", null));
+        System.out.println(gestionnaire.traiterCommande(1, "PENALTY", "4 50"));
+        System.out.println(gestionnaire.traiterCommande(1, "EXIT", null));
+
+        System.out.println();
     }
 }
