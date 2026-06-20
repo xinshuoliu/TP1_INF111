@@ -5,11 +5,22 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+ // Classe principale de gestion de la bibliothèque.
+ // Traite les commandes envoyées par les utilisateurs connectés et coordonne
+ // les opération sur les livres, les emprunts et les commentaires.
 public class GestionnaireBibliotheque {
 
+
+    // Répertoire de tous les utilisateurs enregistrés dans le système
     private Map<Integer, Utilisateur> utilisateurs;
+    
+    // Utilisateurs actuellement connectés au système
     private Map<Integer, Utilisateur> utilisateursAuthentifies;
+
+    // Liste de tous les livres disponibles dans la bibliothèque
     private ListeLivres livres;
+
+    // File de la priorité globale contenant toutes les réservations
     private FilePrioriteReservations reservationsEnAttente;
 
     public GestionnaireBibliotheque() {
@@ -32,12 +43,14 @@ public class GestionnaireBibliotheque {
         utilisateurs.put(karim.getId(), karim);
     }
 
-    //Méthodes
-    //À compléter
+    // Méthodes
+
     public String traiterCommande(int idConnexion, String typeCommande, String argument) {
         if (typeCommande == null) {
             return "COMMAND_ERROR";
         }
+        // Convertit le type de commande en majuscules pour accepter les 
+        // commandes peu importe la casse (ex: "books", "Books" ou "BOOKS")
         switch (typeCommande.toUpperCase()) {
             case "REGISTER" :
                 return traiterREGISTER(argument);
@@ -61,7 +74,7 @@ public class GestionnaireBibliotheque {
         }
     }
 
-    //Exercice 1  
+    // Exercice 1 : traitement de la commande ID  
     public String traiterID(int idConnexion, String argument) {
         if (argument == null || argument.trim().isEmpty()) {
             return "BAD_ARGUMENT_ERROR";
@@ -88,7 +101,7 @@ public class GestionnaireBibliotheque {
         return "AUTHORIZED " + utilisateur.getId() + " " + utilisateur.getNom();
     }
 
-    //Exercice 2
+    // Exercice 2 : traitement de la commande BOOKS
     public String traiterBOOKS() {
         StringBuilder reponse = new StringBuilder();
         reponse.append("BOOKS ").append(livres.taille());
@@ -103,7 +116,7 @@ public class GestionnaireBibliotheque {
         return reponse.toString();
     }
 
-    //Exercice 3
+    // Exercice 3 : traitement de la commande BORROW
     public String traiterBORROW(int idConnexion, String argument) {
 
         Utilisateur utilisateur = utilisateursAuthentifies.get(idConnexion);
@@ -145,7 +158,7 @@ public class GestionnaireBibliotheque {
         return "BORROW_OK " + emprunt.getId() + " " + livre.getId() + " " + emprunt.getJourRetourPrevu();
     }
 
-    //Exercice 4
+    // Exercice 4 : traitement de la commande RETURN
     public String traiterRETURN(int idConnexion, String argument) {
 
         Utilisateur utilisateur = utilisateursAuthentifies.get(idConnexion);
@@ -180,9 +193,14 @@ public class GestionnaireBibliotheque {
         Livre livre = emprunt.getLivre();
  
         Reservation reservation = reservationsEnAttente.retirerPourLivre(livre.getId());
+
+        // Si aucune réservation en attente : le livre redevient DISPONIBLE
         if (reservation == null) {
             livre.setStatut(StatutLivre.DISPONIBLE);
             return "RETURN_OK " + emprunt.getId() + " " + livre.getId();
+
+        // Réservation prioritaire trouvée. Le livre est attribué à l'utilisateur
+        // prioritaire sans repasser par DISPONIBLE. Un nouvel emprunt est crée pour cet utilisateur
         } else {
             reservation.setStatut(StatutReservation.ATTRIBUEE);
             Utilisateur uPrioritaire = utilisateurs.get(reservation.getIdUtilisateur());
@@ -195,7 +213,7 @@ public class GestionnaireBibliotheque {
         }
     }
 
-    //Exercice 5
+    // Exercice 5 : traitement de la commande RESERVE
     public String traiterRESERVE(int idConnexion, String argument) {
 
         Utilisateur utilisateur = utilisateursAuthentifies.get(idConnexion);
@@ -234,7 +252,7 @@ public class GestionnaireBibliotheque {
         return "RESERVATION_OK " + reservation.getId() + " " + livre.getId();
     }
 
-    //Exercice 6
+    // Exercice 6 : traitement de la commande INFO
     public String traiterINFO(int idConnexion, String argument) {
 
         Utilisateur utilisateur = utilisateursAuthentifies.get(idConnexion);
@@ -272,7 +290,7 @@ public class GestionnaireBibliotheque {
         return "INFO 1 {" + emprunt.getId() + " " + emprunt.getLivre().getId() + " " + emprunt.getJourEmprunt() + " " + emprunt.getJourRetourPrevu() + " " + emprunt.getStatut() + "}";
     }
 
-    //Exercice 7
+    // Exercice 7 : traitement de la commande PENALTY
     public String traiterPENALTY(int idConnexion, String argument) {
 
         Utilisateur utilisateur = utilisateursAuthentifies.get(idConnexion);
@@ -294,7 +312,9 @@ public class GestionnaireBibliotheque {
         } catch (NumberFormatException e) {
             return "BAD_ARGUMENT_ERROR";
         }
- 
+        
+        // Recherche l'emprunt autant dans les emprunts en cours que terminés, car
+        // une pénalité peut être calculée même après que le livre ait été rendu.
         Emprunt emprunt = utilisateur.rechercherEmpruntEnCours(idEmprunt);
         if (emprunt == null) {
             emprunt = utilisateur.rechercherEmpruntTermine(idEmprunt);
@@ -312,7 +332,7 @@ public class GestionnaireBibliotheque {
         return "PENALTY " + String.format(Locale.US, "%.2f", montant) + " " + joursRetard;
     }
 
-    //Exercice 8
+    // Exercice 8 : traitement de la commande REGISTER
     public String traiterREGISTER(String argument) {
         if (argument == null) {
             return "BAD_ARGUMENT_ERROR";
@@ -334,6 +354,8 @@ public class GestionnaireBibliotheque {
             return "BAD_ARGUMENT_ERROR";
         }
 
+        // Crée l'objet utilisateur correspondant au type demandé, chaque type ayant
+        // ses propres règles (limite d'emprunts et taux de pénalité diffférent).
         Utilisateur utilisateur;
         switch (typeUtilisateur) {
             case "ETUDIANT" :
@@ -352,7 +374,7 @@ public class GestionnaireBibliotheque {
         utilisateurs.put(idUtilisateur, utilisateur);
         return "REGISTERED " + idUtilisateur + " " + nomUtilisateur;
     }
-    //Exercice 9
+    // Exercice 9 : traitement de la commande EXIT
     public String traiterEXIT(int idConnexion) {
 
         if (utilisateursAuthentifies.containsKey(idConnexion)) {

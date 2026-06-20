@@ -1,5 +1,9 @@
 package gestionnaireBibliotheque;
 
+
+// Réprésente une réservation d'un livre non disponible par un utilisateur.
+// Gère la priorité des réservations selon le type d'utilisateur 
+// (professeur, personnel, étudiant) et l'ordre d'arrivée.
 public class Reservation implements Comparable<Reservation> {
 
     private static int compteurID = 0;
@@ -16,7 +20,9 @@ public class Reservation implements Comparable<Reservation> {
         compteurID++;
         return compteurID;
     }
-
+    // Génère l'ordre d'arrivée de la réservation. Utilisé comme critère de
+    // départage entre deux utilisateurs du même type : la réservation la 
+    // plus ancienne est prioritaire.
     public static int prochainOrdreReservation() {
         compteurOrdre++;
         return compteurOrdre;
@@ -58,7 +64,10 @@ public class Reservation implements Comparable<Reservation> {
     public void setStatut(StatutReservation statut) {
         this.statut = statut;
     }
-
+    
+    // Retourne un niveau de priorité numérique selon le type d'utilisateur
+    // : 0 (PROFESSEUR) étant le plus prioritaire, 1 (PERSONNEL) ensuite,
+    // et 2 (ETUDIANT) le moins prioritaire.
     private int getPriorite() {
         if (typeUtilisateur == TypeUtilisateur.PROFESSEUR) return 0; // 0 = le plus prioritaire
         if (typeUtilisateur == TypeUtilisateur.PERSONNEL) return 1;
@@ -66,6 +75,10 @@ public class Reservation implements Comparable<Reservation> {
     }
 
     @Override
+
+    // Compare deux réservations selon deux critères : le type d'utilisateur
+    // d'abord (professeur > personnel > étudiant), puis l'ordre d'arrivée 
+    // en cas d'égalité. Retourne -1 si prioritaire, 0 si équivalent, 1 si moins prioritaire.
     public int compareTo(Reservation autre) {
         int maPriorite = this.getPriorite();
         int autrePriorite = autre.getPriorite();

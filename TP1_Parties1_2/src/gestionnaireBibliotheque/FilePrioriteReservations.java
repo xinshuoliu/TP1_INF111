@@ -2,6 +2,9 @@ package gestionnaireBibliotheque;
 
 import java.util.PriorityQueue;
 
+ // File de priorité globale gérant toutes les réservations en attente de
+ // la bibliothèque. Les réservations sont automatiquement triées selon
+ // l'ordre naturel défini dans la classe Reservation (type d'utilisateur, puis ordre d'arrivée).
 public class FilePrioriteReservations {
 
     private PriorityQueue<Reservation> file; // trie automatiquement par priorite 
@@ -36,6 +39,8 @@ public class FilePrioriteReservations {
         return file.size();
     }
 
+    // Parcourt toute la file pour trouver et retirer la réservation 
+    // prioritaire associée à un livre précis.
     public Reservation retirerPourLivre(int idLivre) {
         Reservation prioritaire = null;
 
@@ -53,7 +58,8 @@ public class FilePrioriteReservations {
 
         return prioritaire;
     }
-
+    // Vérifie s'il existe au moins une réservation en attente pour un livre précis. 
+    // Ignore les réservations annulées ou déjà attribuées car elles ne bloquent plus le livre.
     public boolean aReservationPourLivre(int idLivre) {
         for (Reservation r : file) {
             // ignore les reservations annulees
