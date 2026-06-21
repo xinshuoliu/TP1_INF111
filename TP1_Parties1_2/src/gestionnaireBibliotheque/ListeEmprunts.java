@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 public class ListeEmprunts implements IListeEmprunts, Iterable<Emprunt> {
 
-    private ArrayList<Emprunt> liste; // tableau dynamique, grandit automatiq
+    private ArrayList<Emprunt> liste;
 
     public ListeEmprunts() {
         liste = new ArrayList<>();
@@ -53,7 +53,7 @@ public class ListeEmprunts implements IListeEmprunts, Iterable<Emprunt> {
 
     @Override
     public Iterator<Emprunt> iterator() {
-        return liste.iterator(); // permet d'utiliser ce objet dans un for-each
+        return liste.iterator();
     }
 
     @Override

@@ -60,10 +60,10 @@ public class Livre {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true; // meme reference en memoire
-        if (!(obj instanceof Livre)) return false; // pas un livre, impossible d'etre egal
+        if (this == obj) return true;
+        if (!(obj instanceof Livre)) return false;
         Livre autre = (Livre) obj;
-        return this.id == autre.id; // deux livres sont egaux si meme id
+        return this.id == autre.id;
     }
 
     @Override

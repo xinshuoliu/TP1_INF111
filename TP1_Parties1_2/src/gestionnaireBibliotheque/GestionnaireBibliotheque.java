@@ -5,22 +5,11 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
- // Classe principale de gestion de la bibliothèque.
- // Traite les commandes envoyées par les utilisateurs connectés et coordonne
- // les opération sur les livres, les emprunts et les commentaires.
 public class GestionnaireBibliotheque {
 
-
-    // Répertoire de tous les utilisateurs enregistrés dans le système
     private Map<Integer, Utilisateur> utilisateurs;
-    
-    // Utilisateurs actuellement connectés au système
     private Map<Integer, Utilisateur> utilisateursAuthentifies;
-
-    // Liste de tous les livres disponibles dans la bibliothèque
     private ListeLivres livres;
-
-    // File de la priorité globale contenant toutes les réservations
     private FilePrioriteReservations reservationsEnAttente;
 
     public GestionnaireBibliotheque() {
@@ -43,14 +32,12 @@ public class GestionnaireBibliotheque {
         utilisateurs.put(karim.getId(), karim);
     }
 
-    // Méthodes
-
     public String traiterCommande(int idConnexion, String typeCommande, String argument) {
         if (typeCommande == null) {
             return "COMMAND_ERROR";
         }
         // Convertit le type de commande en majuscules pour accepter les 
-        // commandes peu importe la casse (ex: "books", "Books" ou "BOOKS")
+        // commandes peu importe la case 
         switch (typeCommande.toUpperCase()) {
             case "REGISTER" :
                 return traiterREGISTER(argument);
@@ -147,7 +134,7 @@ public class GestionnaireBibliotheque {
         if (livre.getStatut() != StatutLivre.DISPONIBLE) {
             return "BOOK_NOT_AVAILABLE_ERROR";
         }
-        if (utilisateur.peutEmprunter() == false) {
+        if (!utilisateur.peutEmprunter()) {
             return "BORROW_LIMIT_ERROR";
         }
 
@@ -322,7 +309,7 @@ public class GestionnaireBibliotheque {
         if (emprunt == null) {
             return "BAD_BORROW_ERROR";
         }
-        if (emprunt.estEnRetard(jourActuel) == false) {
+        if (!emprunt.estEnRetard(jourActuel)) {
             return "PENALTY 0.00 0";  
         }
  

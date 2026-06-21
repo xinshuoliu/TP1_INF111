@@ -5,7 +5,7 @@ public class Demo {
     public static void main(String[] args) {
 
         // Section 1 - Livre
-        System.out.println("=== Section 1 - Livres ===");
+        System.out.println(" Section 1 - Livres --------------------------------------");
         Livre livre1 = new Livre("Mathematiques", "Bernard", "Sciences");
         Livre livre2 = new Livre("Physique", "Leroy", "Sciences");
         Livre livre3 = new Livre("Histoire", "Simon", "Sociales");
@@ -18,7 +18,7 @@ public class Demo {
 
 
         // Section 2 - Emprunt
-        System.out.println("=== Section 2 - Emprunt ===");
+        System.out.println(" Section 2 - Emprunt -------------------------------------");
 
         Etudiant etudiant = new Etudiant(101, "Lucas");
 
@@ -44,7 +44,7 @@ public class Demo {
 
 
         // Section 3 - Penalites
-        System.out.println("=== Section 3 - Penalites ===");
+        System.out.println(" Section 3 - Penalites ---------------------------------------");
 
         Personnel personnel = new Personnel(102, "Marie");
         Professeur professeur = new Professeur(103, "Jean");
@@ -57,7 +57,7 @@ public class Demo {
 
 
         // Section 4 - Reservations et priorites
-        System.out.println("=== Section 4 - Reservations et priorites ===");
+        System.out.println(" Section 4 - Reservations et priorites -----------------------------------");
 
         Livre livreReserve = new Livre("Biologie", "Moreau", "Sciences");
         livreReserve.setStatut(StatutLivre.EMPRUNTE); // reserve seulement ce qui est deja pris
@@ -82,7 +82,7 @@ public class Demo {
 
 
         // Section 5 - Listes
-        System.out.println("=== Section 5 - Listes ===");
+        System.out.println(" Section 5 - Listes ----------------------------------");
 
         ListeLivres listeLivres = new ListeLivres();
         listeLivres.ajouter(livre1);
@@ -105,8 +105,8 @@ public class Demo {
         System.out.println();
 
 
-        // Section 6 - GestionnaireBibliothèque (Partie II)
-        System.out.println("=== Section 6 - Gestionnaire Bibliotheque (Tests) ===");
+        // Section 6 - GestionnaireBibliothèque 
+        System.out.println("Section 6 - Gestionnaire Bibliotheque ----------------------------");
 
         GestionnaireBibliotheque gestionnaire = new GestionnaireBibliotheque();
 
