@@ -30,6 +30,7 @@ import gestionnaireBibliotheque.GestionnaireBibliotheque;
  */
 public class GestionnaireEvenementServeur implements GestionnaireEvenement {
     private Serveur serveur;
+    
     private GestionnaireBibliotheque gestionnaire;
 
     /**
