@@ -194,8 +194,14 @@ public class GestionnaireBibliotheque {
  
             Emprunt nouvelEmprunt = new Emprunt(livre, uPrioritaire.getId(), jourRetour);
             uPrioritaire.ajouterEmpruntEnCours(nouvelEmprunt);
-            livre.setStatut(StatutLivre.EMPRUNTE);
- 
+
+            // autres reservations encore en attente = RESERVE, sinon EMPRUNTE
+            if (reservationsEnAttente.aReservationPourLivre(livre.getId())) {
+                livre.setStatut(StatutLivre.RESERVE);
+            } else {
+                livre.setStatut(StatutLivre.EMPRUNTE);
+            }
+
             return "RESERVATION_ASSIGNED " + nouvelEmprunt.getId() + " " + livre.getId();
         }
     }
